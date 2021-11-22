@@ -13,6 +13,7 @@
       <van-grid-item
         class="welcome-menu-grid-item"
         v-for="item in RouteMap"
+        @click="routeTo(item.path)"
         :key="item"
         :icon="item.icon"
         :text="item.name"
@@ -92,12 +93,22 @@ export default defineComponent({
         icon: "/res/images/encrypt.png",
         name: "加解密",
       },
+      {
+        path: "/about",
+        icon: "/res/images/about.png",
+        name: "关于",
+      }
     ];
   },
   components: {
     "van-grid": Grid,
     "van-grid-item": GridItem,
   },
+  methods: {
+    routeTo(path: string) {
+      this.$router.push(path);
+    },
+  }
 });
 /**
  * 路由详情
