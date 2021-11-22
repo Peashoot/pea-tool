@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { Welcome, WakeOnWan, Authorization } from '../pages'
+import { Welcome, WakeOnWan, Authorization, EncryptAndDecrypt } from '../pages'
 
 const routes = [
   {
@@ -24,6 +24,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Authorization,
+  },
+  {
+    path: '/encrypt',
+    name: 'Encrypt',
+    component: EncryptAndDecrypt,
   }
 ]
 

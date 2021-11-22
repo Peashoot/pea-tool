@@ -4,3 +4,5 @@ export { default as WakeOnWan }
     from './WakeOnWan.vue';
 export { default as Authorization }
     from './Authorization.vue';
+export { default as EncryptAndDecrypt }
+    from './EncryptAndDecrypt.vue';
