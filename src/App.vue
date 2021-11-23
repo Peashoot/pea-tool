@@ -10,9 +10,7 @@
   </float-icon>
   <router-view />
   <van-overlay :show="showLogin" @click="showLogin = false">
-    <div class="wrapper">
-      <pea-login />
-    </div>
+      <pea-login  @click.stop/>
   </van-overlay>
 </template>
 <script lang="ts">
@@ -79,10 +77,9 @@ body {
     }
   }
 }
-.wrapper {
+.van-overlay {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
 }
 </style>

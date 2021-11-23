@@ -2,7 +2,7 @@
   <div>
     <input type="text" name="infix" id="infix" v-model="infix" />
     <input type="text" v-model="postfix" />
-    <button @click="encrypt">前缀表达式转后缀表达式</button>
+    <button @click="encrypt">中缀表达式转后缀表达式</button>
   </div>
 </template>
 
