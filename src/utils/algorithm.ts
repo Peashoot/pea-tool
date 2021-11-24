@@ -155,27 +155,70 @@ export function getPostorderBinaryTree_iterative(root: TreeNode): Array<number> 
     return ret;
 }
 /**
- * 根据数组创建二叉树
+ * 根据前序遍历数组创建二叉树
  */
-export function getTreeNodeByArray(arr: Array<number | null>): TreeNode | null {
+export function getTreeNodeByPreorderArray(arr: Array<number | null>): TreeNode | null {
     if (arr.length === 0 || arr[0] === null) {
         return null;
     }
     const root = new TreeNode(arr[0]);
-    const queue = [root];
+    const stack = [root];
     let i = 1;
-    while (queue.length > 0) {
-        const node = <TreeNode>queue.shift();
-        if (arr[i]) {
+    let node = root;
+    while (stack.length > 0 && i < arr.length) {
+        while (arr[i]) {
             node.left = new TreeNode(<number>arr[i]);
-            queue.push(node.left);
+            stack.push(node.left);
+            node = node.left;
+            i++;
         }
-        i++;
-        if (arr[i]) {
-            node.right = new TreeNode(<number>arr[i]);
-            queue.push(node.right);
+        while (stack.length > 0 && !arr[i]) {
+            do {
+                node = <TreeNode>stack.pop();
+            } while (stack.length > 0 && node.right)
+            i++;
         }
+        node.right = new TreeNode(<number>arr[i]);
+        stack.push(node.right);
+        node = node.right;
         i++;
+    }
+    return root;
+}
+/**
+ * 根据层序遍历数组创建二叉树
+ */
+export function getTreeNodeByFloororderArray(arr: Array<number | null>): TreeNode | null {
+    if (arr.length === 0 || arr[0] === null) {
+        return null;
+    }
+    const root = new TreeNode(arr[0]);
+    const queue = [];
+    let floor = 1; // 当前层有多少个父节点
+    let nextFloor = 1; // 下一层有多少个节点
+    arr.shift(); // 移除第一个元素
+    let count = 0; // 当前已经处理过的子节点数
+    let node = root;
+    for (const item of arr) {
+        if (item) {
+            if (count % 2) {
+                node.right = new TreeNode(item);
+                queue.push(node.right);
+            } else {
+                node.left = new TreeNode(item);
+                queue.push(node.left);
+            }
+            nextFloor++;
+        }
+        if (count % 2) {
+            node = <TreeNode>queue.shift();
+        }
+        count++;
+        if (count >= floor * 2) {
+            floor = nextFloor;
+            nextFloor = 1;
+            count = 0;
+        }
     }
     return root;
 }
