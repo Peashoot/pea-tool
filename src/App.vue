@@ -5,24 +5,35 @@
     </div>
     <div class="float-icon-divide-line"></div>
     <div class="float-icon-item">
-      <van-icon name="/res/images/login.png" @click="showLogin = true" />
+      <van-icon
+        :name="userAvatar"
+        @click="userToken ? userLogOut() : showLoginView()"
+      />
     </div>
   </float-icon>
   <router-view />
   <van-overlay :show="showLogin" @click="showLogin = false">
-      <pea-login  @click.stop/>
+    <pea-login
+      v-if="showLogin"
+      @click.stop
+      @loginSuccess="loginSuccess"
+      v-model:user-token="userToken"
+      v-model:user-avatar="userAvatar"
+    />
   </van-overlay>
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/runtime-core";
 import { FloatIcon } from "./components";
-import { Icon, Overlay } from "vant";
+import { Icon, Overlay, Dialog } from "vant";
 import { Authorization } from "./pages";
 
 export default defineComponent({
   data() {
     return {
       showLogin: false,
+      userToken: "",
+      userAvatar: "/res/images/login.png",
     };
   },
   components: {
@@ -34,6 +45,38 @@ export default defineComponent({
   methods: {
     routeTo(path: string) {
       this.$router.push(path);
+    },
+    /**
+     * 显示登录界面
+     */
+    showLoginView() {
+      this.showLogin = true;
+    },
+    /**
+     * 用户登出
+     */
+    userLogOut() {
+      let self = this;
+      Dialog.confirm({
+        className: "pea-dialog",
+        message: "这么快就要离开了吗 (ಥ﹏ಥ)",
+        confirmButtonText: "残忍离开",
+        cancelButtonText: "下次再说",
+      })
+        .then(() => {
+          self.userToken = "";
+          self.userAvatar = "/res/images/login.png";
+          // on confirm
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    /**
+     * 登录成功后关闭遮罩层
+     */
+    loginSuccess() {
+      this.showLogin = false;
     },
   },
 });
@@ -81,5 +124,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.pea-dialog {
+  --van-dialog-message-font-size: 18px;
 }
 </style>
