@@ -6,9 +6,10 @@
     </div>
     <van-tabs v-model:active="active">
       <van-tab title="解码">
-          <div>
-              <van-uploader preview-size="260px" @after-read="afterUpload"></van-uploader>
-          </div>
+        <div>
+          <van-uploader @after-read="afterUpload"></van-uploader>
+        </div>
+        <button @click="openCamera">打开相机</button>
       </van-tab>
       <van-tab title="编码">编码内容</van-tab>
     </van-tabs>
@@ -22,7 +23,10 @@ export default defineComponent({
   data() {
     return {
       active: 0,
-      imgBase64: ""
+      imgBase64: "",
+      scanner: undefined,
+      currentStream: undefined,
+      isCaptureCamera: false,
     };
   },
   components: {
@@ -33,15 +37,18 @@ export default defineComponent({
   },
   methods: {
     afterUpload(file: File) {
-        if (!/image\/\w+/.test(file.type)) {
-            this.$toast("请选择图片文件");
-            return;
-        }
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            this.imgBase64 = reader.result as string;
-        };
+      if (!/image\/\w+/.test(file.type)) {
+        this.$toast("请选择图片文件");
+        return;
+      }
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        this.imgBase64 = reader.result as string;
+      };
+    },
+    openCamera() {
+      this.$router.push("/camera");
     },
   },
 });

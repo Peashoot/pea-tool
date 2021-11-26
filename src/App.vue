@@ -1,5 +1,5 @@
 <template>
-  <float-icon class="icons-warp">
+  <float-icon v-show="isShowFloatIcon" class="icons-warp">
     <div class="float-icon-item">
       <van-icon name="/res/images/home.png" @click="routeTo('/')" />
     </div>
@@ -77,6 +77,11 @@ export default defineComponent({
      */
     loginSuccess() {
       this.showLogin = false;
+    },
+  },
+  computed: {
+    isShowFloatIcon() {
+      return this.$route.path !== "/camera";
     },
   },
 });

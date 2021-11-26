@@ -8,3 +8,5 @@ export { default as EncryptAndDecrypt }
     from './EncryptAndDecrypt.vue';
 export { default as QRCode }
     from './QRCode.vue';
+export { default as CameraPreview }
+    from './CameraPreview.vue';

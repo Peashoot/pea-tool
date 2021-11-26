@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { Welcome, WakeOnWan, Authorization, EncryptAndDecrypt, QRCode } from '../pages'
+import { Welcome, WakeOnWan, Authorization, EncryptAndDecrypt, QRCode, CameraPreview } from '../pages'
 
 const routes = [
   {
@@ -35,6 +35,11 @@ const routes = [
     name: 'QRCode',
     component: QRCode,
   },
+  {
+    path: '/camera',
+    name: 'Camera',
+    component: CameraPreview,
+  }
 ]
 
 const router = createRouter({
