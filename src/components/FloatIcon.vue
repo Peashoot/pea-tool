@@ -84,8 +84,9 @@ export default {
       });
       div.addEventListener("touchend", () => {
         div.style.transition = "all 0.3s";
+        const tempLeft = this.left + this.$el.clientWidth / 2;
         // 手指放开left位置
-        if (this.left > this.clientWidth / 2) {
+        if (tempLeft > this.clientWidth / 2) {
           this.left = this.clientWidth - this.itemWidth - this.safeArea[1];
         } else {
           this.left = this.safeArea[3];

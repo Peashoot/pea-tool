@@ -139,7 +139,7 @@ interface RouteInfo {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 10;
 }
 .welcome-title-placeholder {
   width: 100%;
