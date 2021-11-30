@@ -9,6 +9,7 @@
         <div>
           <van-uploader @after-read="afterUpload"></van-uploader>
         </div>
+        <div>{{ qrcodeText }}</div>
         <button @click="openCamera">打开相机</button>
       </van-tab>
       <van-tab title="编码">编码内容</van-tab>
@@ -17,16 +18,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, ref } from "@vue/runtime-core";
 import { Icon, Tab, Tabs, Uploader } from "vant";
 export default defineComponent({
   data() {
     return {
       active: 0,
       imgBase64: "",
-      scanner: undefined,
-      currentStream: undefined,
-      isCaptureCamera: false,
+      qrcodeText: ref<string | string[]>(""),
     };
   },
   components: {
@@ -34,6 +33,13 @@ export default defineComponent({
     "van-tab": Tab,
     "van-tabs": Tabs,
     "van-uploader": Uploader,
+  },
+  beforeRouteEnter(to, from, next) {
+    to.params.qrcodeText = from.params.qrcodeText;
+    next();
+  },
+  created() {
+    this.qrcodeText = this.$route.params.qrcodeText;
   },
   methods: {
     afterUpload(file: File) {

@@ -16,7 +16,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/runtime-core";
+import { defineComponent, ref } from "@vue/runtime-core";
+import {
+  BrowserMultiFormatReader,
+  NotFoundException,
+  ChecksumException,
+  FormatException,
+  Exception,
+  Result
+} from "@zxing/library";
 export default defineComponent({
   props: {
     fileBase64: {
@@ -27,7 +35,8 @@ export default defineComponent({
   emits: ["update:fileBase64"],
   data() {
     return {
-      currentStream: undefined,
+      currentStream: ref<MediaStream | undefined>(undefined),
+      codeReader: new BrowserMultiFormatReader(),
     };
   },
   mounted() {
@@ -36,6 +45,7 @@ export default defineComponent({
   beforeRouteLeave(to, from, next) {
     if (typeof this.currentStream !== "undefined" && this.currentStream) {
       this.stopMediaTracks(this.currentStream);
+      this.codeReader.stopContinuousDecode();
     }
     next();
   },
@@ -44,6 +54,7 @@ export default defineComponent({
       if (typeof this.currentStream !== "undefined" && this.currentStream) {
         this.stopMediaTracks(this.currentStream);
       }
+      // 默认打开设备的后置摄像头
       const constraints = {
         video: { facingMode: "environment" },
         audio: false,
@@ -52,38 +63,44 @@ export default defineComponent({
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices
           .getUserMedia(constraints)
-          .then(function (stream: any) {
+          .then(function (stream: MediaStream) {
             self.currentStream = stream;
             //将视频流实时播放在video
-            (self.$refs.cameraVideo as any).srcObject = stream;
-            //截取video内容
-            setTimeout(() => {
-              self.screenShot();
-            }, 2000);
+            (self.$refs.cameraVideo as HTMLVideoElement).srcObject = stream;
+            // 设置识别间隔，单位毫秒
+            self.codeReader.timeBetweenDecodingAttempts = 200;
+            self.codeReader.decodeFromVideoElementContinuously(
+              self.$refs.cameraVideo as HTMLVideoElement,
+              (result: Result, err?: Exception) => {
+                if (result) {
+                  // properly decoded qr code
+                  self.$route.params.qrcodeText = result.getText();
+                  self.$router.back();
+                }
+
+                if (err) {
+                  if (err instanceof NotFoundException) {
+                    console.log("No QR code found.");
+                  } else if (err instanceof ChecksumException) {
+                    console.log("Found QR code but checksum was invalid.");
+                  } else if (err instanceof FormatException) {
+                    console.log("Found something weird");
+                  } else {
+                    console.log("Error decoding QR code", err);
+                  }
+                }
+              }
+            );
           })
           .catch(function (err) {
             alert(err);
           });
       }
     },
-    stopMediaTracks(stream: any) {
+    stopMediaTracks(stream: MediaStream) {
       stream.getTracks().forEach((track: any) => {
         track.stop();
       });
-    },
-    screenShot() {
-      console.log("screenShot");
-      // let $canvas = $("canvas");
-      // let $video = $("video");
-      // $canvas.attr({
-      //   width: $video.width(),
-      //   height: $video.height(),
-      // });
-      // let ctx = $canvas[0].getContext("2d");
-      // ctx.drawImage($video[0], 0, 0, $video.width(), $video.height());
-      // let base64 = $canvas[0].toDataURL("images/png");
-      // //截图成功对图片进行识别
-      // this.decodeQrcode(base64);
     },
   },
 });
@@ -109,7 +126,7 @@ export default defineComponent({
   color: #fff;
   font-size: 20px;
 }
-.camera-preview-title-text{
+.camera-preview-title-text {
   width: 60%;
   font-weight: bold;
   transform: translateX(5px);
