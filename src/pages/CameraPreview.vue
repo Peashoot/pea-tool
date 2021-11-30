@@ -6,11 +6,19 @@
       autoplay
       playsinline
       id="preview"
-    ></video>
+    />
     <div class="camera-preview-title">
       <div class="camera-preview-title-arrow" @click="$router.back()"></div>
       <div class="camera-preview-title-text">扫一扫</div>
-      <div class="camera-preview-title-album">相册</div>
+      <div class="camera-preview-title-album">
+        <input
+          type="file"
+          accept="image/*"
+          capture="camera"
+          @change="fileUploaded($event.target.files)"
+        />
+        相册
+      </div>
     </div>
   </div>
 </template>
@@ -23,20 +31,23 @@ import {
   ChecksumException,
   FormatException,
   Exception,
-  Result
+  Result,
 } from "@zxing/library";
 export default defineComponent({
-  props: {
-    fileBase64: {
-      type: String,
-      default: "",
-    },
-  },
-  emits: ["update:fileBase64"],
   data() {
     return {
+      /**
+       * 当前视频流
+       */
       currentStream: ref<MediaStream | undefined>(undefined),
+      /**
+       * 二维码解析器
+       */
       codeReader: new BrowserMultiFormatReader(),
+      /**
+       * 解析间隔
+       */
+      resolveInterval: 200,
     };
   },
   mounted() {
@@ -50,6 +61,9 @@ export default defineComponent({
     next();
   },
   methods: {
+    /**
+     * 初始化视频流
+     */
     initCamera() {
       if (typeof this.currentStream !== "undefined" && this.currentStream) {
         this.stopMediaTracks(this.currentStream);
@@ -65,15 +79,16 @@ export default defineComponent({
           .getUserMedia(constraints)
           .then(function (stream: MediaStream) {
             self.currentStream = stream;
-            //将视频流实时播放在video
+            // 将视频流实时播放在video
             (self.$refs.cameraVideo as HTMLVideoElement).srcObject = stream;
             // 设置识别间隔，单位毫秒
-            self.codeReader.timeBetweenDecodingAttempts = 200;
+            self.codeReader.timeBetweenDecodingAttempts = self.resolveInterval;
+            // 持续的解析二维码
             self.codeReader.decodeFromVideoElementContinuously(
               self.$refs.cameraVideo as HTMLVideoElement,
               (result: Result, err?: Exception) => {
                 if (result) {
-                  // properly decoded qr code
+                  // 解析成功，返回结果，跳回上一页面
                   self.$route.params.qrcodeText = result.getText();
                   self.$router.back();
                 }
@@ -93,20 +108,49 @@ export default defineComponent({
             );
           })
           .catch(function (err) {
-            alert(err);
+            console.log(err);
           });
       }
     },
+    /**
+     * 停止视频流
+     */
     stopMediaTracks(stream: MediaStream) {
-      stream.getTracks().forEach((track: any) => {
+      stream.getTracks().forEach((track: MediaStreamTrack) => {
         track.stop();
       });
+    },
+    /**
+     * 图片上传完成时，解析二维码
+     */
+    fileUploaded(fileList: FileList) {
+      if (fileList && fileList.length > 0) {
+        const file = fileList[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        const self = this;
+        reader.onload = () => {
+          let imgElement = new Image();
+          imgElement.src = reader.result as string;
+          self.codeReader
+            .decodeFromImageElement(imgElement)
+            .then((result: Result) => {
+              if (result) {
+                self.$route.params.qrcodeText = result.getText();
+                self.$router.back();
+              }
+            });
+        };
+      }
     },
   },
 });
 </script>
 
 <style scoped>
+.camera-preview {
+  background: #000;
+}
 .qrcode-video-preview {
   position: fixed;
   width: 100%;
@@ -116,6 +160,7 @@ export default defineComponent({
   top: 0;
   object-fit: cover;
   transform: scale(1.05, 1.05);
+  background: #000;
 }
 .camera-preview-title {
   width: 100%;
@@ -144,7 +189,17 @@ export default defineComponent({
   float: left;
 }
 .camera-preview-title-album {
+  position: relative;
   float: right;
   font-size: 16px;
+}
+.camera-preview-title-album input {
+  position: absolute;
+  width: 100%;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  cursor: pointer;
 }
 </style>
