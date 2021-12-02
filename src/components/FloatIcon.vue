@@ -77,14 +77,17 @@ export default {
         // 阻止默认动作
         e.preventDefault();
         if (e.targetTouches.length === 1) {
-          const touch = event.targetTouches[0];
+          const touch = e.targetTouches[0];
           this.left = touch.clientX - this.itemWidth / 2;
           this.top = touch.clientY - this.itemHeight / 2;
         }
       });
       div.addEventListener("touchend", () => {
         div.style.transition = "all 0.3s";
-        const tempLeft = this.left + this.$el.clientWidth / 2;
+        if (this.$el.clientWidth > this.clientWidth) {
+          return;
+        }
+        const tempLeft = parseFloat(this.left) + parseFloat(this.$el.clientWidth / 2);
         // 手指放开left位置
         if (tempLeft > this.clientWidth / 2) {
           this.left = this.clientWidth - this.itemWidth - this.safeArea[1];

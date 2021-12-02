@@ -5,27 +5,48 @@
       <div>二维码解析器</div>
     </div>
     <van-tabs v-model:active="active">
+      <van-tab title="编码">
+        <div>二维码内容</div>
+        <textarea
+          class="qrcode-origin-textarea"
+          rows="10"
+          v-model="qrcodeText"
+          placeholder="请输入二维码内容"
+          autofocus
+        ></textarea>
+        <div class="qrcode-generate-setting"></div>
+        <vue-qr :text="qrcodeText" />
+      </van-tab>
       <van-tab title="解码">
         <div>
           <van-uploader @after-read="afterUpload"></van-uploader>
         </div>
-        <div>{{ qrcodeText }}</div>
+        <div>{{ qrcodeResult }}</div>
         <button @click="openCamera">打开相机</button>
       </van-tab>
-      <van-tab title="编码">编码内容</van-tab>
     </van-tabs>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "@vue/runtime-core";
+import { defineComponent } from "@vue/runtime-core";
 import { Icon, Tab, Tabs, Uploader } from "vant";
+import { VueQR } from "@/components";
 export default defineComponent({
   data() {
     return {
+      /**
+       * tab激活索引
+       */
       active: 0,
-      imgBase64: "",
-      qrcodeText: ref<string | string[]>(""),
+      /**
+       * 二维码解码内容
+       */
+      qrcodeResult: "",
+      /**
+       * 二维码文本
+       */
+      qrcodeText: "",
     };
   },
   components: {
@@ -33,26 +54,16 @@ export default defineComponent({
     "van-tab": Tab,
     "van-tabs": Tabs,
     "van-uploader": Uploader,
+    "vue-qr": VueQR,
   },
   beforeRouteEnter(to, from, next) {
-    to.params.qrcodeText = from.params.qrcodeText;
+    to.params.qrcodeResult = from.params.qrcodeResult;
     next();
   },
   created() {
-    this.qrcodeText = this.$route.params.qrcodeText;
+    this.qrcodeResult = this.$route.params.qrcodeResult as string;
   },
   methods: {
-    afterUpload(file: File) {
-      if (!/image\/\w+/.test(file.type)) {
-        this.$toast("请选择图片文件");
-        return;
-      }
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        this.imgBase64 = reader.result as string;
-      };
-    },
     openCamera() {
       this.$router.push("/camera");
     },
@@ -61,10 +72,24 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.qrcode-page {
+  background: #f7f7f7;
+  min-height: 100vh;
+}
 .qrcode-title {
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 36px;
+}
+.qrcode-origin-textarea {
+  resize: none;
+  width: 70%;
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.qrcode-origin-textarea::placeholder {
+  color: #ccc;
 }
 </style>

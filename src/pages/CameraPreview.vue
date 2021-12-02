@@ -89,7 +89,7 @@ export default defineComponent({
               (result: Result, err?: Exception) => {
                 if (result) {
                   // 解析成功，返回结果，跳回上一页面
-                  self.$route.params.qrcodeText = result.getText();
+                  self.$route.params.qrcodeResult = result.getText();
                   self.$router.back();
                 }
 
@@ -136,7 +136,7 @@ export default defineComponent({
             .decodeFromImageElement(imgElement)
             .then((result: Result) => {
               if (result) {
-                self.$route.params.qrcodeText = result.getText();
+                self.$route.params.qrcodeResult = result.getText();
                 self.$router.back();
               }
             });
