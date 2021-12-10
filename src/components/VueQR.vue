@@ -1,157 +1,168 @@
 <template>
   <div class="qrcode-generate">
-    <div class="qrcode-generate-setting-container">
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>容错级别</span>
-          <input type="range" v-model="correctLevel" min="0" max="3" />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>空白边框比例</span>
-          <input type="number" v-model="margin" min="0" max="1" step="0.05" />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>实点颜色</span>
-          <input type="color" v-model="colorDark" />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>空白颜色</span>
-          <input type="color" v-model="colorLight" />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>背景图片</span>
-          <input
-            type="file"
-            accept="image/*"
-            @change="selectBgFile($event.target.files)"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>背景叠加色</span>
-          <input type="color" v-model="backgroundDimming" />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>背景叠加色透明度</span>
-          <input
-            type="number"
-            v-model="backgroundDimmingAlpha"
-            min="0"
-            max="255"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>Logo图片</span>
-          <input
-            type="file"
-            accept="image/*"
-            @change="selectLogoFile($event.target.files)"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>Logo比例</span>
-          <input
-            type="number"
-            v-model="logoScale"
-            min="0"
-            max="1"
-            step="0.05"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>Logo叠加色</span>
-          <input type="color" v-model="logoBackgroundColor" />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>Logo叠加色透明度</span>
-          <input
-            type="number"
-            v-model="logoBackgroundColorAlpha"
-            min="0"
-            max="255"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>Logo白边宽度</span>
-          <input
-            type="number"
-            v-model="logoMargin"
-            min="0"
-            max="200"
-            step="1"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>Logo圆角半径</span>
-          <input
-            type="number"
-            v-model="logoCornerRadius"
-            min="0"
-            max="200"
-            step="1"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>Logo圆角半径</span>
-          <input
-            type="number"
-            v-model="logoCornerRadius"
-            min="0"
-            max="200"
-            step="1"
-          />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>数据区域点缩小比例</span>
-          <input type="number" v-model="dotScale" min="0" max="1" step="0.05" />
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <input type="checkbox" v-model="binarize" />
-          <span>启用二值化处理</span>
-        </label>
-      </div>
-      <div class="qrcode-generate-setting-item">
-        <label>
-          <span>二值化阈值</span>
-          <input
-            type="number"
-            v-model="binarizeThreshold"
-            min="0"
-            max="255"
-            step="1"
-          />
-        </label>
-      </div>
-    </div>
+    <van-collapse
+      class="qrcode-generate-setting-container"
+      v-model="activeNames"
+    >
+      <van-collapse-item title="高级设置" name="1">
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>容错级别</span>
+            <input type="range" v-model="options.correctLevel" min="0" max="3" />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>空白边框比例</span>
+            <input type="number" v-model="options.margin" min="0" max="1" step="0.05" />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>实点颜色</span>
+            <input type="color" v-model="options.colorDark" />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>空白颜色</span>
+            <input type="color" v-model="options.colorLight" />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>背景图片</span>
+            <input
+              type="file"
+              accept="image/*"
+              @change="selectBgFile($event.target.files)"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>背景叠加色</span>
+            <input type="color" v-model="options.backgroundDimming" />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>背景叠加色透明度</span>
+            <input
+              type="number"
+              v-model="options.backgroundDimmingAlpha"
+              min="0"
+              max="255"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>Logo图片</span>
+            <input
+              type="file"
+              accept="image/*"
+              @change="selectLogoFile($event.target.files)"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>Logo比例</span>
+            <input
+              type="number"
+              v-model="options.logoScale"
+              min="0"
+              max="1"
+              step="0.05"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>Logo叠加色</span>
+            <input type="color" v-model="options.logoBackgroundColor" />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>Logo叠加色透明度</span>
+            <input
+              type="number"
+              v-model="options.logoBackgroundColorAlpha"
+              min="0"
+              max="255"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>Logo白边宽度</span>
+            <input
+              type="number"
+              v-model="options.logoMargin"
+              min="0"
+              max="200"
+              step="1"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>Logo圆角半径</span>
+            <input
+              type="number"
+              v-model="options.logoCornerRadius"
+              min="0"
+              max="200"
+              step="1"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>Logo圆角半径</span>
+            <input
+              type="number"
+              v-model="options.logoCornerRadius"
+              min="0"
+              max="200"
+              step="1"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>数据区域点缩小比例</span>
+            <input
+              type="number"
+              v-model="options.dotScale"
+              min="0"
+              max="1"
+              step="0.05"
+            />
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <input type="checkbox" v-model="options.binarize" />
+            <span>启用二值化处理</span>
+          </label>
+        </div>
+        <div class="qrcode-generate-setting-item">
+          <label>
+            <span>二值化阈值</span>
+            <input
+              type="number"
+              v-model="options.binarizeThreshold"
+              min="0"
+              max="255"
+              step="1"
+            />
+          </label>
+        </div>
+      </van-collapse-item>
+    </van-collapse>
     <div class="qrcode-generate-preview-container">
       <div
         class="qrcode-generate-preview-view"
@@ -161,7 +172,7 @@
         <img
           class="qrcode-generate-preview-image"
           :src="imgUrl"
-          v-if="text && bindElement"
+          v-if="text && options.bindElement"
         />
         <div v-else class="qrcode-generate-preview-alt">此处预览二维码</div>
       </div>
@@ -173,6 +184,7 @@
 import { toBoolean } from "vue-qr/src/packages/util";
 import readAsArrayBuffer from "vue-qr/src/packages/readAsArrayBuffer";
 import { AwesomeQR } from "vue-qr/src/lib/awesome-qr";
+import { Collapse, CollapseItem } from "vant";
 export default {
   props: {
     text: {
@@ -180,17 +192,13 @@ export default {
       required: true,
     },
   },
+  components: {
+    "van-collapse": Collapse,
+    "van-collapse-item": CollapseItem,
+  },
   name: "vue-qr",
   data() {
-    return {
-      /**
-       * 二维码预览区域高度
-       */
-      previewImgHeight: "308px",
-      /**
-       * 二维码图片地址
-       */
-      imgUrl: "",
+    const options = {
       qid: "",
       /**
        * 容错级别 0-3
@@ -306,9 +314,30 @@ export default {
         },
       },
     };
+    return {
+      /**
+       *  展开的标签页
+       */
+      activeNames: ["0"],
+      /**
+       * 二维码预览区域高度
+       */
+      previewImgHeight: "308px",
+      /**
+       * 二维码图片地址
+       */
+      imgUrl: "",
+      options,
+    };
   },
   watch: {
     $props: {
+      deep: true,
+      handler() {
+        this.main();
+      },
+    },
+    options: {
       deep: true,
       handler() {
         this.main();
@@ -325,34 +354,35 @@ export default {
   methods: {
     async main() {
       // const that = this;
-      if (this.gifBgSrc) {
-        const gifImg = await readAsArrayBuffer(this.gifBgSrc);
-        const logoImg = this.logoSrc;
+      if (this.options.gifBgSrc) {
+        const gifImg = await readAsArrayBuffer(this.options.gifBgSrc);
+        const logoImg = this.options.logoSrc;
         this.render(undefined, logoImg, gifImg);
         return;
       }
-      const bgImg = this.bgSrc;
-      const logoImg = this.logoSrc;
+      const bgImg = this.options.bgSrc;
+      const logoImg = this.options.logoSrc;
       this.render(bgImg, logoImg);
     },
     async render(img, logoImg, gifBgSrc) {
-      const that = this;
+      const that = this.options;
+      const self = this;
       new AwesomeQR({
         gifBackground: gifBgSrc,
-        text: that.text,
+        text: self.text,
         size: parseFloat(that.size),
         margin: (parseFloat(that.margin) * parseFloat(that.size)) / 2,
         colorDark: that.colorDark,
         colorLight: that.colorLight,
         backgroundColor: that.backgroundColor,
         backgroundImage: img,
-        backgroundDimming: that.getRgbColor(
+        backgroundDimming: self.getRgbaColor(
           that.backgroundDimming,
           parseInt(that.backgroundDimmingAlpha)
         ),
         logoImage: logoImg,
         logoScale: parseFloat(that.logoScale),
-        logoBackgroundColor: that.getRgbColor(
+        logoBackgroundColor: self.getRgbaColor(
           that.logoBackgroundColor,
           parseInt(that.logoBackgroundColorAlpha)
         ),
@@ -378,9 +408,9 @@ export default {
         console.log(file);
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        let self = this;
-        this.gifBgSrc = undefined;
-        this.bgSrc = undefined;
+        let self = this.options;
+        self.gifBgSrc = undefined;
+        self.bgSrc = undefined;
         reader.onload = () => {
           if (file.type && file.type.indexOf("gif") !== -1) {
             self.gifBgSrc = reader.result;
@@ -388,6 +418,9 @@ export default {
             self.bgSrc = reader.result;
           }
         };
+      }else {
+        this.options.gifBgSrc = '';
+        this.options.bgSrc = '';
       }
     },
     selectLogoFile(fileList) {
@@ -396,14 +429,16 @@ export default {
         console.log(file);
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        let self = this;
-        this.logoSrc = undefined;
+        let self = this.options;
+        this.options.logoSrc = undefined;
         reader.onload = () => {
           self.logoSrc = reader.result;
         };
+      } else {
+        this.options.logoSrc = undefined;
       }
     },
-    getRgbColor(color, alpha) {
+    getRgbaColor(color, alpha) {
       var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
       var sColor = color.toLowerCase();
       if (reg.test(sColor)) {
@@ -433,11 +468,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 1rem;
 }
 .qrcode-generate-preview-view {
   background: #fff;
-  width: 78%;
-  max-width: 320px;
+  width: 100%;
 }
 .qrcode-generate-preview {
   width: 100%;
@@ -446,6 +481,7 @@ export default {
 .qrcode-generate-preview-image {
   width: 100%;
   height: 100%;
+  object-fit: contain;
 }
 .qrcode-generate-preview-alt {
   height: 100%;
