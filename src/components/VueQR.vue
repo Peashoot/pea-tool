@@ -5,162 +5,251 @@
       v-model="activeNames"
     >
       <van-collapse-item title="高级设置" name="1">
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>容错级别</span>
-            <input type="range" v-model="options.correctLevel" min="0" max="3" />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>空白边框比例</span>
-            <input type="number" v-model="options.margin" min="0" max="1" step="0.05" />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>实点颜色</span>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >容错级别</van-col
+          >
+          <van-col span="14">
+            <van-slider v-model="options.correctLevel" min="0" max="3" />
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >空白边框比例</van-col
+          >
+          <van-col span="14">
+            <van-stepper v-model="options.margin" min="0" max="1" step="0.05" />
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >实点颜色</van-col
+          >
+          <van-col span="14">
             <input type="color" v-model="options.colorDark" />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>空白颜色</span>
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >空白颜色</van-col
+          >
+          <van-col span="14">
             <input type="color" v-model="options.colorLight" />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>背景图片</span>
-            <input
-              type="file"
-              accept="image/*"
-              @change="selectBgFile($event.target.files)"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-uploader-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >背景图片</van-col
+          >
+          <van-col span="14">
+            <van-uploader
+              v-model="outBgSrc"
+              :after-read="selectBgFile"
+              max-count="1"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>背景叠加色</span>
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >背景叠加色</van-col
+          >
+          <van-col span="14">
             <input type="color" v-model="options.backgroundDimming" />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>背景叠加色透明度</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >背景叠加色透明度</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.backgroundDimmingAlpha"
               min="0"
               max="255"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>Logo图片</span>
-            <input
-              type="file"
-              accept="image/*"
-              @change="selectLogoFile($event.target.files)"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-uploader-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >Logo图片</van-col
+          >
+          <van-col span="14">
+            <van-uploader
+              v-model="outLogoSrc"
+              :after-read="selectLogoFile"
+              max-count="1"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>Logo比例</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >Logo比例</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.logoScale"
               min="0"
               max="1"
               step="0.05"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>Logo叠加色</span>
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >Logo叠加色</van-col
+          >
+          <van-col span="14">
             <input type="color" v-model="options.logoBackgroundColor" />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>Logo叠加色透明度</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >Logo叠加色透明度</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.logoBackgroundColorAlpha"
               min="0"
               max="255"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>Logo白边宽度</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >Logo白边宽度</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.logoMargin"
               min="0"
               max="200"
               step="1"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>Logo圆角半径</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >Logo圆角半径</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.logoCornerRadius"
               min="0"
               max="200"
               step="1"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>Logo圆角半径</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >Logo圆角半径</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.logoCornerRadius"
               min="0"
               max="200"
               step="1"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>数据区域点缩小比例</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >数据区域点缩小比例</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.dotScale"
               min="0"
               max="1"
               step="0.05"
             />
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <input type="checkbox" v-model="options.binarize" />
-            <span>启用二值化处理</span>
-          </label>
-        </div>
-        <div class="qrcode-generate-setting-item">
-          <label>
-            <span>二值化阈值</span>
-            <input
-              type="number"
+          </van-col>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-checkbox v-model="options.binarize">启用二值化处理</van-checkbox>
+        </van-row>
+        <van-row
+          class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >二值化阈值</van-col
+          >
+          <van-col span="14">
+            <van-stepper
               v-model="options.binarizeThreshold"
               min="0"
               max="255"
               step="1"
             />
-          </label>
-        </div>
+          </van-col>
+        </van-row>
       </van-collapse-item>
     </van-collapse>
     <div class="qrcode-generate-preview-container">
@@ -184,7 +273,16 @@
 import { toBoolean } from "vue-qr/src/packages/util";
 import readAsArrayBuffer from "vue-qr/src/packages/readAsArrayBuffer";
 import { AwesomeQR } from "vue-qr/src/lib/awesome-qr";
-import { Collapse, CollapseItem } from "vant";
+import {
+  Collapse,
+  CollapseItem,
+  Stepper,
+  Slider,
+  Uploader,
+  Checkbox,
+  Row,
+  Col,
+} from "vant";
 export default {
   props: {
     text: {
@@ -195,6 +293,12 @@ export default {
   components: {
     "van-collapse": Collapse,
     "van-collapse-item": CollapseItem,
+    "van-stepper": Stepper,
+    "van-slider": Slider,
+    "van-uploader": Uploader,
+    "van-checkbox": Checkbox,
+    "van-row": Row,
+    "van-col": Col,
   },
   name: "vue-qr",
   data() {
@@ -327,6 +431,8 @@ export default {
        * 二维码图片地址
        */
       imgUrl: "",
+      outBgSrc: undefined,
+      outLogoSrc: undefined,
       options,
     };
   },
@@ -402,41 +508,18 @@ export default {
           that.callback && that.callback(dataUri, that.qid);
         });
     },
-    selectBgFile(fileList) {
-      if (fileList && fileList.length > 0) {
-        const file = fileList[0];
-        console.log(file);
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        let self = this.options;
-        self.gifBgSrc = undefined;
-        self.bgSrc = undefined;
-        reader.onload = () => {
-          if (file.type && file.type.indexOf("gif") !== -1) {
-            self.gifBgSrc = reader.result;
-          } else {
-            self.bgSrc = reader.result;
-          }
-        };
-      }else {
-        this.options.gifBgSrc = '';
-        this.options.bgSrc = '';
+    selectBgFile(file) {
+      this.options.bgSrc = undefined;
+      this.options.gifBgSrc = undefined;
+      if (file.file.type && file.file.type.indexOf("gif") !== -1) {
+        this.options.gifBgSrc = file.content;
+      } else {
+        this.options.bgSrc = file.content;
       }
     },
-    selectLogoFile(fileList) {
-      if (fileList && fileList.length > 0) {
-        const file = fileList[0];
-        console.log(file);
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        let self = this.options;
-        this.options.logoSrc = undefined;
-        reader.onload = () => {
-          self.logoSrc = reader.result;
-        };
-      } else {
-        this.options.logoSrc = undefined;
-      }
+    selectLogoFile(file) {
+      this.options.logoSrc = undefined;
+      this.options.logoSrc = file.content;
     },
     getRgbaColor(color, alpha) {
       var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
@@ -488,5 +571,25 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.qrcode-generate-setting-label {
+  text-align: left;
+}
+.qrcode-generate-setting-item {
+  display: flex;
+  align-items: center;
+  --van-stepper-input-width: 80px;
+  --van-uploader-size: 140px;
+  --van-checkbox-label-color: #969799;
+}
+.qrcode-generate-setting-normal-height {
+  height: 40px;
+}
+.van-col > input[type|="color"] {
+  width: 140px;
+}
+.qrcode-generate-setting-uploader-height {
+  height: 140px;
+  margin: 6px 0;
 }
 </style>
