@@ -99,6 +99,23 @@
         </van-row>
         <van-row
           class="
+            qrcode-generate-setting-item qrcode-generate-setting-normal-height
+          "
+        >
+          <van-col span="10" class="qrcode-generate-setting-label"
+            >背景图外白色边框</van-col
+          >
+          <van-col span="14">
+            <van-stepper
+              v-model="options.whiteMargin"
+              min="0"
+              max="200"
+              step="1"
+            />
+          </van-col>
+        </van-row>
+        <van-row
+          class="
             qrcode-generate-setting-item qrcode-generate-setting-uploader-height
           "
         >
@@ -169,23 +186,6 @@
           <van-col span="14">
             <van-stepper
               v-model="options.logoMargin"
-              min="0"
-              max="200"
-              step="1"
-            />
-          </van-col>
-        </van-row>
-        <van-row
-          class="
-            qrcode-generate-setting-item qrcode-generate-setting-normal-height
-          "
-        >
-          <van-col span="10" class="qrcode-generate-setting-label"
-            >Logo圆角半径</van-col
-          >
-          <van-col span="14">
-            <van-stepper
-              v-model="options.logoCornerRadius"
               min="0"
               max="200"
               step="1"
@@ -362,9 +362,9 @@ export default {
        */
       logoCornerRadius: 8,
       /**
-       * 若设为 true, 背景图外将绘制白色边框
+       * 背景图外将绘制白色边框
        */
-      whiteMargin: true,
+      whiteMargin: 0,
       /**
        * 数据区域点缩小比例,默认为1
        */
@@ -587,6 +587,10 @@ export default {
 }
 .van-col > input[type|="color"] {
   width: 140px;
+  border-radius: 3px;
+  padding: 3px;
+  background: #efefef;
+  border: 1px solid #000;
 }
 .qrcode-generate-setting-uploader-height {
   height: 140px;
