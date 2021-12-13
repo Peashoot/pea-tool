@@ -13,7 +13,7 @@
       <van-grid-item
         class="welcome-menu-grid-item"
         v-for="item in RouteMap"
-        @click="routeTo(item.path)"
+        @click="clickToJump(item)"
         :key="item"
         :icon="item.icon"
         :text="item.name"
@@ -39,7 +39,8 @@ export default defineComponent({
   created() {
     this.RouteMap = [
       {
-        path: "/oneword",
+        external: true,
+        path: "https://oneword.peashoot.xyz",
         icon: "/res/images/oneword.png",
         name: "一言",
       },
@@ -54,7 +55,8 @@ export default defineComponent({
         name: "实时基金",
       },
       {
-        path: "/2048",
+        external: true,
+        path: "https://2048.peashoot.xyz",
         icon: "/res/images/2048.png",
         name: "2048",
       },
@@ -74,12 +76,14 @@ export default defineComponent({
         name: "垃圾邮箱",
       },
       {
-        path: "/snapdrop",
+        external: true,
+        path: "https://snapdrop.peashoot.xyz",
         icon: "/res/images/snapdrop.png",
         name: "Snapdrop",
       },
       {
-        path: "/netdisk",
+        external: true,
+        path: "https://pan.peashoot.xyz",
         icon: "/res/images/netdisk.png",
         name: "网盘",
       },
@@ -105,8 +109,12 @@ export default defineComponent({
     "van-grid-item": GridItem,
   },
   methods: {
-    routeTo(path: string) {
-      this.$router.push(path);
+    clickToJump(routeInfo: RouteInfo) {
+      if (routeInfo.external) {
+        window.location.href = routeInfo.path;
+      } else {
+        this.$router.push(routeInfo.path);
+      }
     },
   }
 });
@@ -114,6 +122,10 @@ export default defineComponent({
  * 路由详情
  */
 interface RouteInfo {
+  /**
+   * 外部的路由
+   */
+  external?: boolean;
   /**
    * 路由名称
    */
@@ -129,7 +141,7 @@ interface RouteInfo {
   /**
    * 跳转路由
    */
-  path?: string;
+  path: string;
 }
 </script>
 

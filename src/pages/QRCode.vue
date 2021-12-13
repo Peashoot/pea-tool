@@ -9,16 +9,6 @@
       <div>二维码</div>
     </div>
     <van-tabs v-model:active="active">
-      <van-tab title="编码">
-        <textarea
-          class="qrcode-origin-textarea"
-          rows="10"
-          v-model="qrcodeText"
-          placeholder="请输入二维码内容"
-          autofocus
-        />
-        <vue-qr :text="qrcodeText" />
-      </van-tab>
       <van-tab title="解码" style="font-size: 1rem">
         <button class="qrcode-decode-camera-button" @click="openCamera">
           打开相机
@@ -34,6 +24,16 @@
           class="fa fa-copy fa-lg qrcode-result-copy"
           @click="copyToClipboard"
         />
+      </van-tab>
+      <van-tab title="编码">
+        <textarea
+          class="qrcode-origin-textarea"
+          rows="10"
+          v-model="qrcodeText"
+          placeholder="请输入二维码内容"
+          autofocus
+        />
+        <vue-qr :text="qrcodeText" />
       </van-tab>
     </van-tabs>
     <span v-show="toastMessage" class="qrcode-page-toast-message">{{
