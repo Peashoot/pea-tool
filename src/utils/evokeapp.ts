@@ -10,8 +10,8 @@ const knownMap = new Map<RegExp, string>([
  * @param path 判断的字符串
  */
 export function isEffectiveUrl(path: string): boolean {
-    for (const key in knownMap) {
-        if (path.startsWith(key)) {
+    for (const key of knownMap.keys()) {
+        if (key.test(path)) {
             return true;
         }
     }
