@@ -14,7 +14,6 @@
         <input
           type="file"
           accept="image/*"
-          capture="camera"
           @change="fileUploaded($event.target.files)"
         />
         相册

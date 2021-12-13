@@ -39,6 +39,18 @@
     <span v-show="toastMessage" class="qrcode-page-toast-message">{{
       toastMessage
     }}</span>
+    <div class="qrcode-warning-container" v-show="showWarning">
+      <div class="qrcode-warning">
+        <div class="qrcode-warning-content">
+          检测到二维码内容是链接地址，是否跳转？
+        </div>
+        <div class="qrcode-warning-separator"></div>
+        <div class="qrcode-warning-confirm" @click="jumpToResult">Do it!</div>
+        <div class="qrcode-warning-cancel" @click="showWarning = false">
+          Duck不必
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -46,6 +58,7 @@
 import { defineComponent } from "@vue/runtime-core";
 import { Icon, Tab, Tabs } from "vant";
 import { VueQR } from "@/components";
+import * as evoke from "@/utils/evokeapp";
 export default defineComponent({
   data() {
     return {
@@ -65,6 +78,10 @@ export default defineComponent({
        * toast提示信息
        */
       toastMessage: "",
+      /**
+       * 是否显示警告
+       */
+      showWarning: true,
     };
   },
   components: {
@@ -79,6 +96,7 @@ export default defineComponent({
   },
   created() {
     this.qrcodeResult = this.$route.params.qrcodeResult as string;
+    this.showWarning = evoke.isEffectiveUrl(this.qrcodeResult);
   },
   methods: {
     openCamera() {
@@ -99,6 +117,12 @@ export default defineComponent({
     copyToClipboard() {
       navigator.clipboard.writeText(this.qrcodeResult);
       this.showToast("复制成功");
+    },
+    /**
+     * 跳转链接
+     */
+    jumpToResult() {
+      window.open(evoke.getTargetLink(this.qrcodeResult));
     },
   },
 });
@@ -166,5 +190,55 @@ export default defineComponent({
   padding: 7px 10px;
   border-radius: 5px;
   transform: translate(-50%, -50%);
+}
+.qrcode-warning-container {
+  position: absolute;
+  z-index: 21;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+}
+.qrcode-warning {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.qrcode-warning-content {
+  width: 260px;
+  padding: 40px 20px;
+  text-align: center;
+}
+.qrcode-warning-separator {
+  width: 100%;
+  height: 1px;
+  background: #e5e5e5;
+}
+.qrcode-warning-confirm {
+  display: flex;
+  width: 50%;
+  height: 45px;
+  border-width: 0px;
+  align-items: center;
+  justify-content: center;
+  background: #1989fa;
+  color: #ffffff;
+  float: left;
+}
+.qrcode-warning-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 45px;
+  border-width: 0px;
+  background: #ffffff;
+  color: #1989fa;
+  float: right;
 }
 </style>
