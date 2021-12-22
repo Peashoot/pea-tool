@@ -241,6 +241,13 @@ interface RouteInfo {
 .welcome-menu-grid {
   --van-grid-item-text-font-size: 1rem;
 }
+.welcome-menu-grid-item {
+  font-family: ZCOOLKuaiLe;
+}
+@font-face {
+  font-family: ZCOOLKuaiLe;
+  src: url('/res/fonts/ZCOOLKuaiLe-Regular.ttf');
+}
 </style>
 <style>
 .welcome-menu-grid-item > .van-hairline {

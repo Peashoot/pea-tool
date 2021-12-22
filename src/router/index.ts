@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { Welcome, WakeOnWan, Authorization, EncryptAndDecrypt, QRCode, CameraPreview } from '../pages'
+import { Welcome, WakeOnWan, Authorization, EncryptAndDecrypt, QRCode, CameraPreview, Translator } from '../pages'
 
 const routes = [
   {
@@ -39,7 +39,12 @@ const routes = [
     path: '/camera',
     name: 'Camera',
     component: CameraPreview,
-  }
+  },
+  {
+    path: '/translate',
+    name: 'Translator',
+    component: Translator,
+  },
 ]
 
 const router = createRouter({

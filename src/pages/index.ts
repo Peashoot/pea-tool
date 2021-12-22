@@ -10,3 +10,5 @@ export { default as QRCode }
     from './QRCode.vue';
 export { default as CameraPreview }
     from './CameraPreview.vue';
+export { default as Translator }
+    from './Translator.vue';

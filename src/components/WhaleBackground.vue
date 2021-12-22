@@ -9,6 +9,7 @@
     viewBox="0 0 2100 2100"
     style="enable-background: new 0 0 2100 2100"
     xml:space="preserve"
+    :style="{ opacity: opacity }"
   >
     <g id="Background">
       <g>
@@ -354,7 +355,17 @@
     <g></g>
   </svg>
 </template>
-
+<script lang="ts">
+import { defineComponent } from "vue";
+export default defineComponent({
+  props: {
+    opacity: {
+      type: Number,
+      default: 1,
+    },
+  },
+});
+</script>
 <style scoped>
 svg {
   max-height: 100%;
