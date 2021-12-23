@@ -4,9 +4,7 @@
     contenteditable="true"
     :placeholder="placeholder"
     @input="handleInput($event)"
-  >
-    {{ modelValue }}
-  </div>
+  ></div>
 </template>
 
 <script lang="ts">
@@ -31,15 +29,22 @@ export default defineComponent({
       this.$emit("update:modelValue", value);
     },
   },
+  watch: {
+    modelValue(value: string) {
+      if (this.$el.innerText !== value) {
+        this.$el.innerText = value;
+      }
+    },
+  },
 });
 </script>
 
 <style>
 .pea-editable-div {
-  display: inline-block;
   background: #fff;
   outline: 0;
   text-align: left;
+  -webkit-user-modify: read-write-plaintext-only;
 }
 .pea-editable-div:empty:before {
   content: attr(placeholder);
