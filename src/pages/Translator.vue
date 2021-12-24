@@ -38,9 +38,14 @@
     </div>
     <!--语言选择框-->
     <div class="translate-language">
-      <span class="translate-selection">{{ originalLangauge }}</span>
-      <span class="material-icons translate-icon">swap_horiz</span>
-      <span class="translate-selection">{{ resultLangaue }}</span>
+      <div class="translate-selection">{{ originLangName }}</div>
+      <button
+        class="material-icons translate-icons translate-swap-icon"
+        @click="javascript(0)"
+      >
+        swap_horiz
+      </button>
+      <div class="translate-selection">{{ resultLangName }}</div>
     </div>
     <!--翻译区域-->
     <div class="translate-area">
@@ -51,22 +56,37 @@
           class="translate-textarea-input"
           :placeholder="wordsPlaceholder"
           v-model="origin"
+          @focus="showTranslateButton = true"
+          @blur="showTranslateButton = false"
+          ref="originInput"
         />
         <!--输入菜单（翻译和清除）-->
         <div class="translate-input-menu">
-          <div class="translate-input-menu-item">
+          <div
+            class="translate-input-menu-item"
+            v-show="showTranslateButton"
+            @click="translate"
+          >
             <div class="translate-do-translate">
               <div class="material-icons">arrow_forward</div>
             </div>
           </div>
-          <div class="translate-input-menu-item" @click="origin = ''">
+          <div
+            class="translate-input-menu-item"
+            v-show="origin.length > 0"
+            @click="clearInput"
+          >
             <div class="translate-do-truncate">
               <div class="material-icons">close</div>
             </div>
           </div>
         </div>
+        <!--源文本音标-->
+        <div class="translate-result-phonetic" v-show="originPhonetic">
+          {{ originPhonetic }}
+        </div>
         <!--检测到的源语言-->
-        <div class="translate-detect-area">
+        <div class="translate-detect-area" v-show="detectResult">
           <div class="material-icons translate-detect-icon">auto_awesome</div>
           <div class="translate-detect-text">
             <div class="translate-detect-label">{{ detectLabel }}</div>
@@ -75,25 +95,42 @@
         </div>
         <!--输入底部菜单（语音、发音和字数）-->
         <div class="translate-textarea-control">
-          <div class="material-icons translate-voice-input">mic</div>
-          <div class="material-icons translate-voice-input">volume_up</div>
+          <button class="material-icons translate-icons translate-voice-input">
+            mic
+          </button>
+          <div v-show="origin">
+            <button
+              class="material-icons translate-icons translate-voice-input"
+              @click="playSourceSound"
+            >
+              volume_up
+            </button>
+            <audio hidden ref="sourceAudio"></audio>
+          </div>
           <div class="translate-words-count">
             {{ originLength }} / {{ convertNumberToString(maxlength) }}
           </div>
         </div>
       </div>
       <!--翻译结果区域框-->
-      <div class="translate-result-area">
+      <div class="translate-result-area" v-show="translateResult">
         <!--翻译结果-->
         <div class="translate-result-text">{{ translateResult }}</div>
         <!--翻译结果音标-->
         <div class="translate-result-phonetic">{{ translatePhonetic }}</div>
         <!--翻译结果底部控制栏（读音、复制、建议、分享）-->
         <div class="translate-result-contorl">
-          <div
-            class="material-icons translate-icons translate-icons-result-sound"
-          >
-            volume_up
+          <div>
+            <div
+              class="
+                material-icons
+                translate-icons translate-icons-result-sound
+              "
+              @click="playTargetSound"
+            >
+              volume_up
+            </div>
+            <audio hidden ref="targetAudio"></audio>
           </div>
           <div class="material-icons translate-icons">content_copy</div>
           <svg
@@ -119,6 +156,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { EditableDiv } from "../components";
+import * as GoogleAPI from "../utils/googleapi";
 export default defineComponent({
   components: {
     ediv: EditableDiv,
@@ -129,20 +167,93 @@ export default defineComponent({
       maxlength: 5000,
       wordsPlaceholder: "输入文字",
       wordsTranslate: "翻译",
-      originalLangauge: "英语",
-      resultLangaue: "中文（简体）",
+      originalLanguage: "en",
+      resultLanguage: "zh-CN",
       detectLabel: "源语言：",
-      detectResult: "威尔士语",
-      translateResult: "今日头条",
+      detectResult: "",
+      translateResult: "",
+      originPhonetic: "",
       translatePhonetic: "sDaysssssssssssssssssssssssssssssssss",
+      showTranslateButton: false,
+      sourceLanguages: GoogleAPI.supportSourceLanguages,
+      targetLanguages: GoogleAPI.supportTargetLanguages,
     };
   },
   computed: {
+    /**
+     * 要翻译的文本长度
+     */
     originLength() {
       return (this as any).origin.length;
     },
+    /**
+     * 源语言名称
+     */
+    originLangName() {
+      return (this as any).sourceLanguages.get((this as any).originalLanguage);
+    },
+    /**
+     * 目标语言名称
+     */
+    resultLangName() {
+      return (this as any).targetLanguages.get((this as any).resultLanguage);
+    },
   },
   methods: {
+    /**
+     * 翻译文本
+     */
+    translate() {
+      GoogleAPI.doTranslate(
+        this.origin,
+        this.originalLanguage,
+        this.resultLanguage
+      );
+    },
+    /**
+     * 清空输入框
+     */
+    clearInput() {
+      this.origin = "";
+      this.translateResult = "";
+      (this.$refs.originInput as any).$el.focus();
+    },
+    /**
+     * 播放源文本音频
+     */
+    playSourceSound() {
+      const self = this;
+      GoogleAPI.getWordVoice(
+        this.origin,
+        this.originalLanguage,
+        (result: string) => {
+          const sourceAudio = self.$refs.sourceAudio as HTMLAudioElement;
+          const targetAudio = self.$refs.targetAudio as HTMLAudioElement;
+          sourceAudio.pause();
+          targetAudio.pause();
+          sourceAudio.src = "data:audio/wav;base64," + result;
+          sourceAudio.play();
+        }
+      );
+    },
+    /**
+     * 播放翻译结果音频
+     */
+    playTargetSound() {
+      const self = this;
+      GoogleAPI.getWordVoice(
+        this.translateResult,
+        this.resultLanguage,
+        (result: string) => {
+          const sourceAudio = self.$refs.sourceAudio as HTMLAudioElement;
+          const targetAudio = self.$refs.targetAudio as HTMLAudioElement;
+          sourceAudio.pause();
+          targetAudio.pause();
+          targetAudio.src = "data:audio/wav;base64," + result;
+          targetAudio.play();
+        }
+      );
+    },
     /**
      * 千分位逗号数字格式化
      */
@@ -276,6 +387,7 @@ span.e {
   margin: 5px 12px;
 }
 .translate-textarea-control {
+  margin-left: 8px;
   height: 53px;
   padding-bottom: 5px;
   display: flex;
@@ -284,7 +396,6 @@ span.e {
 }
 .translate-voice-input {
   margin-left: 12px;
-  margin-right: 12px;
   color: #5f6368;
 }
 .translate-words-count {
@@ -362,7 +473,10 @@ span.e {
   text-align: right;
 }
 .translate-icons {
-  padding: 12px;
+  margin: 3px;
+  padding: 9px;
+  border-width: 0;
+  background: rgba(0, 0, 0, 0);
 }
 .translate-icons-result-sound {
   float: left;
@@ -370,5 +484,10 @@ span.e {
 .translate-icons-result-thumbs {
   fill: #fff;
   padding: 0 12px;
+}
+.translate-icons:focus {
+  content: "";
+  border-radius: 50%;
+  background: #f5f5f5;
 }
 </style>

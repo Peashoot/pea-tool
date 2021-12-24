@@ -51,7 +51,4 @@ export default defineComponent({
   color: #75757e;
   font-size: 23px;
 }
-.pea-editable-div:focus:before {
-  content: none;
-}
 </style>
